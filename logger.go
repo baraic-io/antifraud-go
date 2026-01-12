@@ -1,3 +1,3 @@
-package main
+package antifraud
 
 /* TODO: Implement it */

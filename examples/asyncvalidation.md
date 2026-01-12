@@ -1,5 +1,5 @@
 ```go
-package examples
+package main
 
 import (
 	"fmt"
