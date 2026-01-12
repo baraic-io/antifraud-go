@@ -19,7 +19,7 @@ func (c Client) ValidateTransactionSync(transaction Transaction) (SyncResolution
 		return SyncResolution{}, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, "POST", c.Host+"/api/gatewaysvc/sync/transaction", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequestWithContext(ctx, "POST", c.Host+"/api/gtwsvc/sync/transaction", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return SyncResolution{}, err
 	}
