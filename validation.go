@@ -63,7 +63,7 @@ func (c Client) ValidateTransactionAsync(transaction Transaction) (AsyncResoluti
 		return AsyncResolution{}, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, "POST", c.Host+"/api/gatewaysvc/async/transaction", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequestWithContext(ctx, "POST", c.Host+"/api/gtwsvc/async/transaction", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return AsyncResolution{}, err
 	}
