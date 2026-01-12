@@ -30,6 +30,7 @@ func (c Client) ValidateTransactionSync(transaction Transaction) (SyncResolution
 	if err != nil {
 		return SyncResolution{}, err
 	}
+	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		responseBody, err := io.ReadAll(response.Body)
@@ -73,6 +74,7 @@ func (c Client) ValidateTransactionAsync(transaction Transaction) (AsyncResoluti
 	if err != nil {
 		return AsyncResolution{}, err
 	}
+	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		responseBody, err := io.ReadAll(response.Body)

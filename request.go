@@ -29,7 +29,6 @@ func (c Client) doRequest(request *http.Request) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
 
 	return response, nil
 }
