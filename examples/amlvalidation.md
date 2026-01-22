@@ -1,25 +1,28 @@
-package antifraud
+```go
+package main
 
 import (
+	"fmt"
 	"os"
-	"testing"
 	"time"
 
+	af "github.com/baraic-io/antifraud-go"
 	"github.com/google/uuid"
 )
 
-func TestValidateTransactionByAML(t *testing.T) {
-	isFraudParticipant := false
+func main() {
+	apiKey := os.Getenv("API_KEY")
+	host := os.Getenv("API_HOST")
 
-	client, err := NewClient(ClientConfig{Host: "http://localhost:8000", APIKey: ""})
+	client, err := af.NewClient(af.ClientConfig{Host: host, APIKey: apiKey})
 	if err != nil {
-		t.Errorf("failed to initialize new client: %s", err.Error())
+		panic(err)
 	}
 
 	now := time.Now()
 
-	resolution, err := client.ValidateTransactionByAML(AF_Transaction{
-		Transaction: Transaction{
+	result, err := client.ValidateTransactionByAML(af.AF_Transaction{
+		Transaction: af.Transaction{
 			Id:                 uuid.New().String(),
 			SourceUserId:       uuid.NewString(),
 			SourceIdentifier:   "000000000001",
@@ -50,23 +53,9 @@ func TestValidateTransactionByAML(t *testing.T) {
 		},
 	})
 	if err != nil {
-		t.Fatalf("failed to validate transaction by AML: %s", err.Error())
+		panic(err)
 	}
 
-	t.Logf("resolution: %+v", resolution)
-
-	if isFraudParticipant {
-		if resolution.Fraud != true {
-			t.Errorf("excepted fraudulent client, got resolution fraud: %v", resolution.Fraud)
-		}
-	} else {
-		if resolution.Fraud != false {
-			t.Errorf("excepted not fraudulent client, got resolution fraud: %v", resolution.Fraud)
-		}
-	}
+	fmt.Printf("AML Validation Resolution: %v", result)
 }
-
-func TestMain(m *testing.M) {
-	code := m.Run()
-	os.Exit(code)
-}
+```

@@ -1,6 +1,7 @@
 package antifraud
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -14,7 +15,7 @@ func NewCodeError(code int, msg string) error {
 }
 
 func (e CodeError) Error() string {
-	return e.Msg
+	return fmt.Sprintf("request failed with status code: %d, response: %s", e.Code, e.Msg)
 }
 
 var (

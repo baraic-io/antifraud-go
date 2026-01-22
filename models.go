@@ -1,6 +1,15 @@
 package antifraud
 
-import "time"
+import (
+	"errors"
+	"time"
+
+	"github.com/google/uuid"
+)
+
+var (
+	ErrNotImplemented = errors.New("not implemented")
+)
 
 const (
 	SyncMode = iota
@@ -88,4 +97,29 @@ type AsyncResolution struct {
 	AF_Id       string `json:"af_id"`
 	AF_Datetime string `json:"af_datetime"`
 	AF_AddDate  string `json:"af_add_date"`
+}
+
+type ServiceResolution struct {
+	AF_Id       string              `json:"af_id"`
+	TxnId       string              `json:"txn_id"`
+	Id          uuid.UUID           `json:"id"`
+	Date        time.Time           `json:"date"`
+	Service     string              `json:"service"`
+	Error       string              `json:"error,omitempty"`
+	Details     map[string]string   `json:"details,omitempty"`
+	Action      map[string]struct{} `json:"action,omitempty"`
+	ProcessTime int64               `json:"process_time"`
+	Retry       uint                `json:"retry"`
+	Fraud       bool                `json:"fraud"`
+	Validated   bool                `json:"validated"`
+	Blocked     bool                `json:"blocked"`
+	Alert       bool                `json:"alert"`
+	InWhiteList bool                `json:"in_white_list"`
+}
+
+type AF_Transaction struct {
+	Transaction Transaction `json:"transaction,omitempty"`
+	AF_Id       string      `json:"_AF_ID"`
+	AF_Datetime string      `json:"_AF_DATETIME"`
+	AF_AddDate  string      `json:"_AF_ADD_DATE"`
 }

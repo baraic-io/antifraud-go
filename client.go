@@ -20,7 +20,7 @@ type Client struct {
 func NewClient(c ClientConfig) (Client, error) {
 	client := Client{ClientConfig: c}
 
-	/* TODO: Add conf related TLS InsecureSkipVerify */
+	/* TODO: Add conf related TLS InsecureSkipVerify, move timeouts to conf */
 	httpClient := &http.Client{
 		Timeout: 30 * time.Second,
 		Transport: &http.Transport{
