@@ -6,9 +6,15 @@ import (
 	"time"
 )
 
+const DefaultValidationCtxDeadlineTimeout = 30
+
 type ClientConfig struct {
 	Host   string
 	APIKey string
+
+	// Transaction validation context max deadline timeout in seconds.
+	// If not provided default=30 value will be setted.
+	ValidationCtxDeadlineTimeout int
 }
 
 type Client struct {
@@ -18,6 +24,10 @@ type Client struct {
 }
 
 func NewClient(c ClientConfig) (Client, error) {
+	if c.ValidationCtxDeadlineTimeout == 0 {
+		c.ValidationCtxDeadlineTimeout = DefaultValidationCtxDeadlineTimeout
+	}
+
 	client := Client{ClientConfig: c}
 
 	/* TODO: Add conf related TLS InsecureSkipVerify, move timeouts to conf */

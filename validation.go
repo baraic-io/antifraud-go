@@ -12,7 +12,7 @@ import (
 
 /* Validate Transaction in Sync mode */
 func (c Client) ValidateTransactionSync(transaction Transaction) (SyncResolution, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 1000*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(c.ClientConfig.ValidationCtxDeadlineTimeout)*time.Second)
 	defer cancel()
 
 	jsonData, err := json.Marshal(transaction)
@@ -57,7 +57,7 @@ func (c Client) ValidateTransactionSync(transaction Transaction) (SyncResolution
 
 /* Validate Transaction in Async mode */
 func (c Client) ValidateTransactionAsync(transaction Transaction) (AsyncResolution, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 1000*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(c.ClientConfig.ValidationCtxDeadlineTimeout)*time.Second)
 	defer cancel()
 
 	jsonData, err := json.Marshal(transaction)
@@ -102,8 +102,7 @@ func (c Client) ValidateTransactionAsync(transaction Transaction) (AsyncResoluti
 
 /* Validate Transaction by AML Service */
 func (c Client) ValidateTransactionByAML(af_transaction AF_Transaction) (ServiceResolution, error) {
-	/* TODO: Move context timeout to conf */
-	ctx, cancel := context.WithTimeout(context.Background(), 1000*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(c.ClientConfig.ValidationCtxDeadlineTimeout)*time.Second)
 	defer cancel()
 
 	jsonData, err := json.Marshal(af_transaction)
