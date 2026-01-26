@@ -78,6 +78,7 @@ type Transaction struct {
 
 type SyncResolution struct {
 	AF_Id               string                 `json:"af_id"`
+	AF_Transaction      AF_Transaction         `json:"af_transaction"`
 	Id                  string                 `json:"id"`
 	Error               string                 `json:"af_error,omitempty"`
 	Details             map[string]interface{} `json:"af_details,omitempty"`
@@ -117,9 +118,15 @@ type ServiceResolution struct {
 	InWhiteList bool                `json:"in_white_list"`
 }
 
+type AF_Retry struct {
+	RetryCount int `json:"retry_count"`
+	RetryMax   int `json:"retry_max"`
+}
+
 type AF_Transaction struct {
-	Transaction Transaction `json:"transaction,omitempty"`
-	AF_Id       string      `json:"_AF_ID"`
-	AF_Datetime string      `json:"_AF_DATETIME"`
-	AF_AddDate  string      `json:"_AF_ADD_DATE"`
+	Transaction Transaction         `json:"transaction,omitempty"`
+	AF_Id       string              `json:"_AF_ID"`
+	AF_Datetime string              `json:"_AF_DATETIME"`
+	AF_AddDate  string              `json:"_AF_ADD_DATE"`
+	AF_Retries  map[string]AF_Retry `json:"_AF_RETRIES,omitempty"`
 }
