@@ -2,6 +2,7 @@ package antifraud
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -23,7 +24,7 @@ var (
 	ErrInvalidToken = NewCodeError(401, "Invalid or expired token")
 )
 
-func (c Client) doRequest(request *http.Request) (*http.Response, error) {
+func (c Client) doRequest(request *http.Request) ([]byte, error) {
 	request.Header.Add("X-API-Key", c.APIKey)
 
 	response, err := c.httpClient.Do(request)
@@ -31,5 +32,21 @@ func (c Client) doRequest(request *http.Request) (*http.Response, error) {
 		return nil, err
 	}
 
-	return response, nil
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		responseBody, err := io.ReadAll(response.Body)
+		if err != nil {
+			return nil, CodeError{Code: response.StatusCode, Msg: fmt.Errorf("failed to read response body: %s", err.Error()).Error()}
+		}
+
+		return nil, CodeError{Code: response.StatusCode, Msg: string(responseBody)}
+	}
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return responseBody, nil
 }

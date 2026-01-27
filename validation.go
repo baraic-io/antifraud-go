@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
 	"time"
 )
@@ -31,24 +29,9 @@ func (c Client) ValidateTransactionSync(transaction Transaction) (SyncResolution
 	if err != nil {
 		return SyncResolution{}, err
 	}
-	defer response.Body.Close()
-
-	if response.StatusCode != http.StatusOK {
-		responseBody, err := io.ReadAll(response.Body)
-		if err != nil {
-			return SyncResolution{}, fmt.Errorf("failed to read response body: %s", err.Error())
-		}
-
-		return SyncResolution{}, CodeError{Code: response.StatusCode, Msg: string(responseBody)}
-	}
-
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		return SyncResolution{}, err
-	}
 
 	var resolution SyncResolution
-	if err := json.Unmarshal(responseBody, &resolution); err != nil {
+	if err := json.Unmarshal(response, &resolution); err != nil {
 		return SyncResolution{}, err
 	}
 
@@ -76,24 +59,9 @@ func (c Client) ValidateTransactionAsync(transaction Transaction) (AsyncResoluti
 	if err != nil {
 		return AsyncResolution{}, err
 	}
-	defer response.Body.Close()
-
-	if response.StatusCode != http.StatusOK {
-		responseBody, err := io.ReadAll(response.Body)
-		if err != nil {
-			return AsyncResolution{}, fmt.Errorf("failed to read response body: %s", err.Error())
-		}
-
-		return AsyncResolution{}, CodeError{Code: response.StatusCode, Msg: string(responseBody)}
-	}
-
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		return AsyncResolution{}, err
-	}
 
 	var resolution AsyncResolution
-	if err := json.Unmarshal(responseBody, &resolution); err != nil {
+	if err := json.Unmarshal(response, &resolution); err != nil {
 		return AsyncResolution{}, err
 	}
 
@@ -121,31 +89,41 @@ func (c Client) ValidateTransactionByAML(af_transaction AF_Transaction) (Service
 	if err != nil {
 		return ServiceResolution{}, err
 	}
-	defer response.Body.Close()
-
-	if response.StatusCode != http.StatusOK {
-		responseBody, err := io.ReadAll(response.Body)
-		if err != nil {
-			return ServiceResolution{}, fmt.Errorf("failed to read response body: %s", err.Error())
-		}
-
-		return ServiceResolution{}, CodeError{Code: response.StatusCode, Msg: string(responseBody)}
-	}
-
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		return ServiceResolution{}, err
-	}
 
 	var resolution ServiceResolution
-	if err := json.Unmarshal(responseBody, &resolution); err != nil {
+	if err := json.Unmarshal(response, &resolution); err != nil {
 		return ServiceResolution{}, err
 	}
 
 	return resolution, nil
 }
 
-/* Validate Transaction by Custom Rules (Not implemented) */
+/* Validate Transaction by Custom Rules */
 func (c Client) ValidateTransactionByRules(af_transaction AF_Transaction) (ServiceResolution, error) {
-	return ServiceResolution{}, ErrNotImplemented
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(c.ClientConfig.ValidationCtxDeadlineTimeout)*time.Second)
+	defer cancel()
+
+	jsonData, err := json.Marshal(af_transaction)
+	if err != nil {
+		return ServiceResolution{}, err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "POST", c.Host+"/api/fcsvc/validate", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return ServiceResolution{}, err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+
+	response, err := c.doRequest(req)
+	if err != nil {
+		return ServiceResolution{}, err
+	}
+
+	var resolution ServiceResolution
+	if err := json.Unmarshal(response, &resolution); err != nil {
+		return ServiceResolution{}, err
+	}
+
+	return resolution, nil
 }
