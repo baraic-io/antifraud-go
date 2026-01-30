@@ -16,6 +16,8 @@ const (
 	AsyncMode
 )
 
+type FinalResolution SyncResolution
+
 type Transaction struct {
 	Id string `json:"id"`
 
@@ -82,6 +84,7 @@ type SyncResolution struct {
 	Id                  string                 `json:"id"`
 	Error               string                 `json:"af_error,omitempty"`
 	Details             map[string]interface{} `json:"af_details,omitempty"`
+	AddDate             time.Time              `json:"af_add_date"`
 	FinalizedDate       time.Time              `json:"af_finalized_date"`
 	FinalizedAction     string                 `json:"af_finalized_action"`
 	ProcessTime         int64                  `json:"af_process_time"`
@@ -95,9 +98,8 @@ type SyncResolution struct {
 }
 
 type AsyncResolution struct {
-	AF_Id       string `json:"af_id"`
-	AF_Datetime string `json:"af_datetime"`
-	AF_AddDate  string `json:"af_add_date"`
+	AF_Id      string `json:"af_id"`
+	AF_AddDate string `json:"af_add_date"`
 }
 
 type ServiceResolution struct {
@@ -125,8 +127,7 @@ type AF_Retry struct {
 
 type AF_Transaction struct {
 	Transaction Transaction         `json:"transaction,omitempty"`
-	AF_Id       string              `json:"_AF_ID"`
-	AF_Datetime string              `json:"_AF_DATETIME"`
-	AF_AddDate  string              `json:"_AF_ADD_DATE"`
-	AF_Retries  map[string]AF_Retry `json:"_AF_RETRIES,omitempty"`
+	AF_Id       string              `json:"af_id"`
+	AF_AddDate  string              `json:"af_add_date"`
+	AF_Retries  map[string]AF_Retry `json:"af_retries,omitempty"`
 }

@@ -8,6 +8,36 @@ import (
 	"time"
 )
 
+/* Validate transaction by any validation service */
+func (c Client) validate(servicePath string, af_transaction AF_Transaction) (ServiceResolution, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(c.ClientConfig.ValidationCtxDeadlineTimeout)*time.Second)
+	defer cancel()
+
+	jsonData, err := json.Marshal(af_transaction)
+	if err != nil {
+		return ServiceResolution{}, err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "POST", c.Host+servicePath, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return ServiceResolution{}, err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+
+	response, err := c.doRequest(req)
+	if err != nil {
+		return ServiceResolution{}, err
+	}
+
+	var resolution ServiceResolution
+	if err := json.Unmarshal(response, &resolution); err != nil {
+		return ServiceResolution{}, err
+	}
+
+	return resolution, nil
+}
+
 /* Validate Transaction in Sync mode */
 func (c Client) ValidateTransactionSync(transaction Transaction) (SyncResolution, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(c.ClientConfig.ValidationCtxDeadlineTimeout)*time.Second)
@@ -70,58 +100,28 @@ func (c Client) ValidateTransactionAsync(transaction Transaction) (AsyncResoluti
 
 /* Validate Transaction by AML Service */
 func (c Client) ValidateTransactionByAML(af_transaction AF_Transaction) (ServiceResolution, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(c.ClientConfig.ValidationCtxDeadlineTimeout)*time.Second)
-	defer cancel()
-
-	jsonData, err := json.Marshal(af_transaction)
+	resolution, err := c.validate("/api/amlsvc/validate", af_transaction)
 	if err != nil {
-		return ServiceResolution{}, err
-	}
-
-	req, err := http.NewRequestWithContext(ctx, "POST", c.Host+"/api/amlsvc/validate", bytes.NewBuffer(jsonData))
-	if err != nil {
-		return ServiceResolution{}, err
-	}
-
-	req.Header.Add("Content-Type", "application/json")
-
-	response, err := c.doRequest(req)
-	if err != nil {
-		return ServiceResolution{}, err
-	}
-
-	var resolution ServiceResolution
-	if err := json.Unmarshal(response, &resolution); err != nil {
 		return ServiceResolution{}, err
 	}
 
 	return resolution, nil
 }
 
-/* Validate Transaction by Custom Rules */
-func (c Client) ValidateTransactionByRules(af_transaction AF_Transaction) (ServiceResolution, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(c.ClientConfig.ValidationCtxDeadlineTimeout)*time.Second)
-	defer cancel()
-
-	jsonData, err := json.Marshal(af_transaction)
+/* Validate Transaction by FC service */
+func (c Client) ValidateTransactionByFC(af_transaction AF_Transaction) (ServiceResolution, error) {
+	resolution, err := c.validate("/api/fcsvc/validate", af_transaction)
 	if err != nil {
 		return ServiceResolution{}, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, "POST", c.Host+"/api/fcsvc/validate", bytes.NewBuffer(jsonData))
+	return resolution, nil
+}
+
+/* Validate Transaction by LST service */
+func (c Client) ValidateTransactionByLST(af_transaction AF_Transaction) (ServiceResolution, error) {
+	resolution, err := c.validate("/api/lstsvc/validate", af_transaction)
 	if err != nil {
-		return ServiceResolution{}, err
-	}
-
-	req.Header.Add("Content-Type", "application/json")
-
-	response, err := c.doRequest(req)
-	if err != nil {
-		return ServiceResolution{}, err
-	}
-
-	var resolution ServiceResolution
-	if err := json.Unmarshal(response, &resolution); err != nil {
 		return ServiceResolution{}, err
 	}
 
