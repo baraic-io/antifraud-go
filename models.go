@@ -21,61 +21,29 @@ type FinalResolution SyncResolution
 type Transaction struct {
 	Id string `json:"id"`
 
-	SourceUserId     string `json:"source_user_id"`
-	SourceIdentifier string `json:"source_identifier"`
-	SourceFullname   string `json:"source_fullname"`
-	SourceCardNumber string `json:"source_card_number"`
-	SourceAccount    string `json:"source_account"`
+	Type        string `json:"type"` // deposit, withdraw
+	Date        string `json:"date"`
+	Amount      string `json:"amount"`
+	Currency    string `json:"currency"`
+	Description string `json:"description,optional"`
 
-	TargetUserId     string `json:"target_user_id"`
-	TargetIdentifier string `json:"target_identifier"`
-	TargetFullname   string `json:"target_fullname"`
-	TargetCardNumber string `json:"target_card_number"`
-	TargetAccount    string `json:"target_account"`
+	ClientId         string `json:"client_id"`
+	ClientName       string `json:"client_name"`
+	ClientPAN        string `json:"client_pan"`
+	ClientCVV        string `json:"client_card_cvv,optional"`
+	ClientCardHolder string `json:"client_card_holder,optional"`
+	ClientCountry    string `json:"client_country,optional"`
+	ClientCity       string `json:"client_city,optional"`
+	ClientPhone      string `json:"client_phone,optional"`
 
-	MerchantId         string `json:"merchant_id"`
+	MerchantId         string `json:"merchant_id,optional"`
+	MerchantDescriptor string `json:"merchant_descriptor,optional"`
 	MerchantTerminalId string `json:"merchant_terminal_id"`
-	MerchantMCCCode    string `json:"merchant_mcc_code"`
+	MerchantCountry    string `json:"merchant_country,optional"`
 
-	Date               string `json:"date"`
-	Time               string `json:"time"`
-	Amount             string `json:"amount"`
-	Currency           string `json:"currency"`
-	PaymentMode        string `json:"payment_mode"`
-	TransactionType    string `json:"transaction_type"`
-	TransactionCountry string `json:"transaction_country"`
-	TransactionCity    string `json:"transaction_city"`
-	TransactionChannel string `json:"transaction_channel"`
-	TransactionRRN     string `json:"transaction_rrn"`
-	TransactionStatus  string `json:"transaction_status,optional"`
-
-	RegistrationDate string `json:"registration_date,optional"`
-	CardType         string `json:"card_type"`
-
-	NewRecipient string `json:"new_recipient,optional"`
-	NewTerminal  string `json:"new_terminal,optional"`
-
-	DeviceId             string `json:"device_id" aml:"device_id"`
-	LastDeviceUpdateDate string `json:"last_device_update_date,optional"`
-	IPConnentionType     string `json:"ip_connection_type,optional"`
-	RemoteAccess         string `json:"remote_access,optional"`
-	ScreenSharing        string `json:"screen_sharing,optional"`
-	HardwareId           string `json:"hardware_id,optional"`
-	OSID                 string `json:"os_id,optional"`
-	IsTokenized          string `json:"is_tokenized,optional"`
-	WebLocale            string `json:"web_locale,optional"`
-	CookieEnabled        string `json:"cookie_enabled,optional"`
-
-	LastLoginDate        string `json:"last_login_date,optional"`
-	LastRegistrationDate string `json:"last_registration_date,optional"`
-
-	LastDenyEvent   string `json:"last_deny_event_date,optional"`
-	LastReviewEvent string `json:"last_review_event_date,optional"`
-
-	LastLimitsUpdateDate    string `json:"last_limit_update_date,optional"`
-	LastLoanApplicationDate string `json:"last_loan_application_date,optional"`
-	LastLoanApprovalDate    string `json:"last_loan_approval_date,optional"`
-	PinUpdateDate           string `json:"pin_update_date,optional"`
+	Channel         string `json:"channel,optional"` // E-com, mobile, etc
+	LocationIp      string `json:"location_ip,optional"`
+	LocationCountry string `json:"location_country,optional"`
 }
 
 type SyncResolution struct {
