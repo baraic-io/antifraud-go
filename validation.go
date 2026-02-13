@@ -118,8 +118,18 @@ func (c Client) ValidateTransactionByFC(af_transaction AF_Transaction) (ServiceR
 	return resolution, nil
 }
 
-/* Validate Transaction by LST service */
-func (c Client) ValidateTransactionByLST(af_transaction AF_Transaction) (ServiceResolution, error) {
+/* Validate Transaction by ML service */
+func (c Client) ValidateTransactionByML(af_transaction AF_Transaction) (ServiceResolution, error) {
+	resolution, err := c.validate("/api/mlsvc/validate", af_transaction)
+	if err != nil {
+		return ServiceResolution{}, err
+	}
+
+	return resolution, nil
+}
+
+/* DEPRECATED: Validate Transaction by LST service */
+func (c Client) validateTransactionByLST(af_transaction AF_Transaction) (ServiceResolution, error) {
 	resolution, err := c.validate("/api/lstsvc/validate", af_transaction)
 	if err != nil {
 		return ServiceResolution{}, err

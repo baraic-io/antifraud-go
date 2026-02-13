@@ -14,6 +14,7 @@ service AntifraudService {
         AddTransactionServiceCheck,
         ValidateTransactionByAML,
         ValidateTransactionByFC,
+        ValidateTransactionByML,
         ValidateTransactionByLST,
         StoreTransaction,
         StoreServiceResolution,
@@ -45,6 +46,13 @@ operation ValidateTransactionByAML {
 /// Validate a transaction using the FC service.
 @http(method: "POST", uri: "/api/fcsvc/validate")
 operation ValidateTransactionByFC {
+    input: AF_Transaction
+    output: ServiceResolution
+}
+
+/// Validate a transaction using the ML service.
+@http(method: "POST", uri: "/api/mlsvc/validate")
+operation ValidateTransactionByML {
     input: AF_Transaction
     output: ServiceResolution
 }

@@ -42,6 +42,14 @@ Validates a transaction using the FC service.
 func (c Client) ValidateTransactionByFC(af_transaction AF_Transaction) (ServiceResolution, error)
 ```
 
+### ValidateTransactionByML
+
+Validates a transaction using the ML service.
+
+```go
+func (c Client) ValidateTransactionByML(af_transaction AF_Transaction) (ServiceResolution, error)
+```
+
 
 
 ### StoreServiceResolution
@@ -184,20 +192,43 @@ func main() {
 
 	fmt.Println("[STEP 7] success")
 
-	/* Step 8: Finalize transaction validation */
-	finalResolution, err := client.FinalizeTransaction(af_transaction)
+	/* Step 8: Transaction validation by ML service */
+	mlresult, err := client.ValidateTransactionByML(af_transaction)
 	if err != nil {
 		panic("[STEP 8] failed: " + err.Error())
 	}
 
 	fmt.Println("[STEP 8] success")
-	fmt.Printf("Final resolution: %+v\n", finalResolution)
+	fmt.Printf("Validation transaction by ML service: %+v\n", mlresult)
 
-	/* Step 9: Store final resolution */
-	if err := client.StoreFinalResolution(finalResolution); err != nil {
+	/* Step 9: Store ML service resolution */
+	if err := client.StoreServiceResolution(mlresult); err != nil {
 		panic("[STEP 9] failed: " + err.Error())
 	}
 
 	fmt.Println("[STEP 9] success")
+
+	/* Step 10: Add ML service resolution to finalize process */
+	if err := client.AddTransactionServiceCheck(mlresult); err != nil {
+		panic("[STEP 10] failed: " + err.Error())
+	}
+
+	fmt.Println("[STEP 10] success")
+
+	/* Step 11: Finalize transaction validation */
+	finalResolution, err := client.FinalizeTransaction(af_transaction)
+	if err != nil {
+		panic("[STEP 11] failed: " + err.Error())
+	}
+
+	fmt.Println("[STEP 11] success")
+	fmt.Printf("Final resolution: %+v\n", finalResolution)
+
+	/* Step 12: Store final resolution */
+	if err := client.StoreFinalResolution(finalResolution); err != nil {
+		panic("[STEP 12] failed: " + err.Error())
+	}
+
+	fmt.Println("[STEP 12] success")
 }
 ```
