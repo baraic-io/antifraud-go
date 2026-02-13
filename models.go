@@ -27,8 +27,8 @@ type Transaction struct {
 	Currency    string `json:"currency"`
 	Description string `json:"description,optional"`
 
-	ClientId         string `json:"client_id"`
-	ClientName       string `json:"client_name"`
+	ClientId         string `json:"client_id,optional"`
+	ClientName       string `json:"client_name,optional"`
 	ClientPAN        string `json:"client_pan"`
 	ClientCVV        string `json:"client_card_cvv,optional"`
 	ClientCardHolder string `json:"client_card_holder,optional"`
