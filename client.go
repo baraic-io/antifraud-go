@@ -34,7 +34,8 @@ func NewClient(c ClientConfig) (Client, error) {
 	httpClient := &http.Client{
 		Timeout: 30 * time.Second,
 		Transport: &http.Transport{
-			MaxIdleConns:        10,
+			MaxIdleConns:        100,
+			MaxIdleConnsPerHost: 100,
 			IdleConnTimeout:     30 * time.Second,
 			TLSHandshakeTimeout: 30 * time.Second,
 			TLSClientConfig: &tls.Config{
