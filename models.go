@@ -99,3 +99,22 @@ type AF_Transaction struct {
 	AF_AddDate  string              `json:"af_add_date"`
 	AF_Retries  map[string]AF_Retry `json:"af_retries,omitempty"`
 }
+
+type ValidatedTransaction struct {
+	Transaction Transaction `json:"transaction"`
+	Decision    int         `json:"decision"` // 0 - not fraud, 1 - fraud
+}
+
+type RetrainLog struct {
+	Timestamp   string
+	DatasetSize int
+	AUC         float64
+	Precision   float64
+	Recall      float64
+	F1          float64
+	TP          int
+	FP          int
+	FN          int
+	TN          int
+	FPR         float64
+}
