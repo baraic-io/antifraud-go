@@ -50,8 +50,6 @@ Validates a transaction using the ML service.
 func (c Client) ValidateTransactionByML(af_transaction AF_Transaction) (ServiceResolution, error)
 ```
 
-
-
 ### StoreServiceResolution
 
 Stores the resolution from a service check (AML, FC, LST).
@@ -118,25 +116,33 @@ func main() {
 
 	now := time.Now()
 
-	af_transaction := af.AF_Transaction{
-		AF_Id:      uuid.NewString(),
-		AF_AddDate: now.Format(time.RFC3339Nano),
-		Transaction: af.Transaction{
-			Id:                 uuid.New().String(),
-			Type:               "deposit",
-			Date:               now.Format(time.RFC3339Nano),
-			Amount:             "100000",
-			Currency:           "KZT",
-			ClientId:           uuid.New().String(),
-			ClientName:         "John Smith",
-			ClientPAN:          "111111******1111",
-			ClientCVV:          "111",
-			ClientCardHolder:   "JOHN SMITH",
-			ClientPhone:        "+77007007070",
-			MerchantTerminalId: "00000001",
-			Channel:            "E-com",
-			LocationIp:         "192.168.0.1",
+	sourceTransaction := map[string]interface{}{
+		"merchant_order_id": uuid.NewString(),
+		"amount":            "100000",
+		"currency":          "KZT",
+		"description":       "Test transaction",
+		"pan":               "111111******1111",
+		"client": map[string]interface{}{
+			"id":      uuid.NewString(),
+			"name":    "John Smith",
+			"phone":   "+77007007070",
+			"country": "KZ",
 		},
+		"location": map[string]interface{}{
+			"ip":      "192.168.0.1",
+			"country": "KZ",
+		},
+	}
+
+	transaction, err := client.ToAFTransaction(af.ChannelEcom, af.TransactionTypeDeposit, sourceTransaction)
+	if err != nil {
+		panic(err)
+	}
+
+	af_transaction := af.AF_Transaction{
+		AF_Id:       uuid.NewString(),
+		AF_AddDate:  now.Format(time.RFC3339Nano),
+		Transaction: transaction,
 	}
 
 	/* Step 1: Store transaction */
