@@ -111,6 +111,8 @@ func (c Client) ToAFTransaction(channel, transactionType string, transaction map
 	}
 
 	switch channel {
+	default:
+		return Transaction{}, fmt.Errorf("Unsupported channel type: %s", channel)
 	case ChannelBinance:
 		orderId, ok := transaction["order_id"].(string)
 		if !ok {
