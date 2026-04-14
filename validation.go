@@ -199,44 +199,30 @@ func (c Client) ToAFTransaction(channel, transactionType string, transaction map
 
 		afTransaction.Amount = amount
 	case ChannelEcom:
-		/* TODO: Parse client card details */
 		transferId, ok := transaction["merchant_order_id"].(string)
 		if !ok {
 			return Transaction{}, errors.New("field not found: merchant_order_id")
 		}
-
 		afTransaction.Id = transferId
 
 		amount, ok := transaction["amount"].(string)
 		if !ok {
 			return Transaction{}, errors.New("field not found: amount")
 		}
-
 		afTransaction.Amount = amount
 
 		currency, ok := transaction["currency"].(string)
 		if !ok {
 			return Transaction{}, errors.New("field not found: currency")
 		}
-
 		afTransaction.Currency = strings.ToUpper(currency)
 
-		description, ok := transaction["description"].(string)
-		if !ok {
-			return Transaction{}, errors.New("field not found: description")
-		}
-
+		description, _ := transaction["description"].(string)
 		afTransaction.Description = description
 
 		clientPAN, ok := transaction["pan"].(string)
 		if !ok {
 			return Transaction{}, errors.New("field not found: pan")
-		}
-
-		/* TODO: Client fields validation */
-		client, ok := transaction["client"].(map[string]interface{})
-		if !ok {
-			return Transaction{}, errors.New("field not found: client")
 		}
 
 		if transactionType == TransactionTypeDeposit {
@@ -245,22 +231,28 @@ func (c Client) ToAFTransaction(channel, transactionType string, transaction map
 			afTransaction.RecipientPAN = clientPAN
 		}
 
-		// Map client details
-		id := fmt.Sprintf("%v", client["id"])
-		if id == "<nil>" {
-			id = ""
+		/* Parsing client information */
+		/* TODO: Is client information are required? */
+		client, ok := transaction["client"].(map[string]interface{})
+		if !ok {
+			return Transaction{}, errors.New("field not found: client")
 		}
-		name := fmt.Sprintf("%v", client["name"])
-		if name == "<nil>" {
-			name = ""
+
+		var id, name, phone, country string
+		id, _ = client["id"].(string)
+		name, _ = client["name"].(string)
+		phone, _ = client["phone"].(string)
+		country, _ = client["country"].(string)
+
+		/* Parsing merchant */
+		options, ok := transaction["options"].(map[string]interface{})
+		if !ok {
+			return Transaction{}, errors.New("field not found: options")
 		}
-		phone := fmt.Sprintf("%v", client["phone"])
-		if phone == "<nil>" {
-			phone = ""
-		}
-		country := fmt.Sprintf("%v", client["country"])
-		if country == "<nil>" {
-			country = ""
+
+		merchantTerminalId, ok := options["terminal"].(string)
+		if !ok {
+			return Transaction{}, errors.New("field not found: terminal")
 		}
 
 		if transactionType == TransactionTypeWithdraw {
@@ -269,21 +261,28 @@ func (c Client) ToAFTransaction(channel, transactionType string, transaction map
 			afTransaction.RecipientPhone = phone
 			afTransaction.RecipientCountry = country
 			afTransaction.RecipientType = ClientTypePerson
-		} else {
+
+			afTransaction.SenderId = merchantTerminalId
+			afTransaction.SenderType = ClientTypeOrganization
+		} else if transactionType == TransactionTypeDeposit {
 			afTransaction.SenderId = id
 			afTransaction.SenderName = name
 			afTransaction.SenderPhone = phone
 			afTransaction.SenderCountry = country
 			afTransaction.SenderType = ClientTypePerson
+
+			afTransaction.RecipientId = merchantTerminalId
+			afTransaction.RecipientType = ClientTypeOrganization
 		}
 
+		/* TODO: Is location are required? */
 		location, ok := transaction["location"].(map[string]interface{})
 		if !ok {
 			return Transaction{}, errors.New("field not found: location")
 		}
 
-		afTransaction.LocationIp = fmt.Sprintf("%v", location["ip"])
-		afTransaction.LocationCountry = fmt.Sprintf("%v", location["country"])
+		afTransaction.LocationIp, _ = location["ip"].(string)
+		afTransaction.LocationCountry, _ = location["country"].(string)
 	}
 
 	return afTransaction, nil
