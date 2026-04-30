@@ -13,6 +13,10 @@ var (
 	ErrNotImplemented = errors.New("not implemented")
 )
 
+var (
+	ChannelMobileProductIds = [...]string{"C2C2Out"}
+)
+
 const (
 	TransactionTypeDeposit  = "deposit"
 	TransactionTypeWithdraw = "withdraw"
@@ -33,39 +37,57 @@ const (
 type FinalResolution SyncResolution
 
 type Transaction struct {
-	Id string `json:"id"`
+	Id        string `json:"id"`
+	RequestId string `json:"request_id,optional"`
 
-	Type        string `json:"type"`             // deposit, withdraw
-	Channel     string `json:"channel,optional"` // e-com, mobile, binance
-	Date        string `json:"date"`
-	Amount      string `json:"amount"`
-	Currency    string `json:"currency"`
-	Description string `json:"description,optional"`
+	Type         string `json:"type"`                // deposit, withdraw
+	Channel      string `json:"channel,optional"`    // e-com, mobile, binance
+	ProductId    string `json:"product_id,optional"` // C2C2Out
+	Date         string `json:"date"`
+	CreationDate string `json:"creation_date,optional"`
+	Amount       string `json:"amount"`
+	Currency     string `json:"currency"`
+	Description  string `json:"description,optional"`
+	KNPCode      string `json:"knp_code,optional"`
+	OperType     int    `json:"oper_type,optional"`
 
 	LocationIp      string `json:"location_ip,optional"`
 	LocationCountry string `json:"location_country,optional"`
 
 	SenderId             string `json:"sender_id,optional"`
+	SenderIINBIN         string `json:"sender_iinbin,optional"`
 	SenderType           string `json:"sender_type,optional"` // person, organization, merchant
 	SenderName           string `json:"sender_name,optional"`
 	SenderPAN            string `json:"sender_pan,optional"`
 	SenderCVV            string `json:"sender_card_cvv,optional"`
 	SenderCardHolder     string `json:"sender_card_holder,optional"`
-	SenderCardYearMonth  string `json:"sender_card_year_month,optional"`
+	SenderCardExpDate    string `json:"sender_card_exp_date,optional"`
+	SenderCardOpenDate   string `json:"sender_card_open_date,optional"`
 	SenderContractNumber string `json:"sender_contract_number,optional"`
 	SenderCountry        string `json:"sender_country,optional"`
 	SenderPhone          string `json:"sender_phone,optional"`
+	SenderRegDate        string `json:"sender_reg_date,optional"`
+	SenderBankBic        string `json:"sender_bank_bic,optional"`
+	SenderBankName       string `json:"sender_bank_name,optional"`
 
 	RecipientId             string `json:"recipient_id,optional"`
+	RecipientIINBIN         string `json:"recipient_iinbin,optional"`
 	RecipientType           string `json:"recipient_type,optional"`
 	RecipientName           string `json:"recipient_name,optional"`
 	RecipientPAN            string `json:"recipient_pan,optional"`
 	RecipientCVV            string `json:"recipient_card_cvv,optional"`
 	RecipientCardHolder     string `json:"recipient_card_holder,optional"`
-	RecipientCardYearMonth  string `json:"recipient_card_year_month,optional"`
+	RecipientCardExpDate    string `json:"recipient_card_exp_date,optional"`
+	RecipientCardOpenDate   string `json:"recipient_card_open_date,optional"`
 	RecipientContractNumber string `json:"recipient_contract_number,optional"`
 	RecipientCountry        string `json:"recipient_country,optional"`
 	RecipientPhone          string `json:"recipient_phone,optional"`
+	RecipientRegDate        string `json:"recipient_reg_date,optional"`
+	RecipientBankBic        string `json:"recipient_bank_bic,optional"`
+	RecipientBankName       string `json:"recipient_bank_name,optional"`
+
+	SenderIsClient    bool `json:"sender_is_client,optional"`
+	RecipientIsClient bool `json:"recipient_is_client,optional"`
 }
 
 type SyncResolution struct {
