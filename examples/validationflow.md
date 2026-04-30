@@ -27,24 +27,58 @@ func main() {
 	now := time.Now()
 
 	sourceTransaction := map[string]interface{}{
-		"merchant_order_id": uuid.NewString(),
-		"amount":            "100000",
-		"currency":          "KZT",
-		"description":       "Test transaction",
-		"pan":               "111111******1111",
-		"client": map[string]interface{}{
-			"id":      uuid.NewString(),
-			"name":    "John Smith",
-			"phone":   "+77007007070",
-			"country": "KZ",
-		},
-		"location": map[string]interface{}{
-			"ip":      "192.168.0.1",
-			"country": "KZ",
+		"ip_addr": "192.168.0.1",
+		"req_id":  uuid.NewString(),
+		"finoper": map[string]interface{}{
+			"product_id":         "C2C2Out",
+			"oper_id":            uuid.NewString(),
+			"reason":             "Test transfer",
+			"knp_code":           "111",
+			"oper_type":          float64(1),
+			"oper_date_time":     now.Format(time.RFC3339Nano),
+			"creation_date_time": now.Format(time.RFC3339Nano),
+			"person": []interface{}{
+				map[string]interface{}{
+					"iin":             "123456789012",
+					"full_name":       "Test Sender",
+					"person_type":     float64(2),
+					"mobile_number":   "+77007007070",
+					"client_reg_date": now.Format(time.RFC3339Nano),
+					"is_client":       true,
+				},
+				map[string]interface{}{
+					"iin":             "987654321098",
+					"full_name":       "Test Recipient",
+					"person_type":     float64(2),
+					"mobile_number":   "+77007007071",
+					"client_reg_date": now.Format(time.RFC3339Nano),
+					"is_client":       true,
+				},
+			},
+			"finoper_dc": []interface{}{
+				map[string]interface{}{
+					"amount_kzt":     float64(100000.0),
+					"bank_bic":       "AAAABBBB",
+					"bank_name":      "Test Bank",
+					"card_number":    "111111******1111",
+					"card_exp_date":  "12/26",
+					"card_open_date": "01/24",
+					"account_number": "KZ000000",
+				},
+				map[string]interface{}{
+					"amount_kzt":     float64(100000.0),
+					"bank_bic":       "CCCCDDDD",
+					"bank_name":      "Another Bank",
+					"card_number":    "222222******2222",
+					"card_exp_date":  "11/25",
+					"card_open_date": "01/23",
+					"account_number": "KZ111111",
+				},
+			},
 		},
 	}
 
-	transaction, err := client.ToAFTransaction(af.ChannelEcom, af.TransactionTypeDeposit, sourceTransaction)
+	transaction, err := client.ToAFTransaction(sourceTransaction)
 	if err != nil {
 		panic(err)
 	}

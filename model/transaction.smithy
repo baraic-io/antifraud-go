@@ -8,6 +8,9 @@ structure Transaction {
     @jsonName("id")
     id: String,
 
+    @jsonName("request_id")
+    requestId: String,
+
     @required
     @jsonName("type")
     type: TransactionType,
@@ -17,6 +20,9 @@ structure Transaction {
     @documentation("Must be in RFC3339Nano format (e.g., 2019-12-12T12:00:00.000000000Z)")
     @pattern("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$")
     date: String,
+    
+    @jsonName("creation_date")
+    creationDate: String,
 
     @required
     @jsonName("amount")
@@ -32,6 +38,15 @@ structure Transaction {
     @jsonName("channel")
     channel: ChannelType,
 
+    @jsonName("product_id")
+    productId: String,
+
+    @jsonName("knp_code")
+    knpCode: String,
+
+    @jsonName("oper_type")
+    operType: Integer,
+
     @jsonName("location_ip")
     locationIp: String,
 
@@ -41,6 +56,9 @@ structure Transaction {
     // Sender fields
     @jsonName("sender_id")
     senderId: String,
+
+    @jsonName("sender_iinbin")
+    senderIINBIN: String,
 
     @jsonName("sender_type")
     senderType: ClientType,
@@ -57,8 +75,11 @@ structure Transaction {
     @jsonName("sender_card_holder")
     senderCardHolder: String,
 
-    @jsonName("sender_card_year_month")
-    senderCardYearMonth: String,
+    @jsonName("sender_card_exp_date")
+    senderCardExpDate: String,
+
+    @jsonName("sender_card_open_date")
+    senderCardOpenDate: String,
 
     @jsonName("sender_contract_number")
     senderContractNumber: String,
@@ -69,9 +90,24 @@ structure Transaction {
     @jsonName("sender_phone")
     senderPhone: String,
 
+    @jsonName("sender_reg_date")
+    senderRegDate: String,
+
+    @jsonName("sender_bank_bic")
+    senderBankBic: String,
+
+    @jsonName("sender_bank_name")
+    senderBankName: String,
+
+    @jsonName("sender_is_client")
+    senderIsClient: Boolean,
+
     // Recipient fields
     @jsonName("recipient_id")
     recipientId: String,
+
+    @jsonName("recipient_iinbin")
+    recipientIINBIN: String,
 
     @jsonName("recipient_type")
     recipientType: ClientType,
@@ -88,8 +124,11 @@ structure Transaction {
     @jsonName("recipient_card_holder")
     recipientCardHolder: String,
 
-    @jsonName("recipient_card_year_month")
-    recipientCardYearMonth: String,
+    @jsonName("recipient_card_exp_date")
+    recipientCardExpDate: String,
+
+    @jsonName("recipient_card_open_date")
+    recipientCardOpenDate: String,
 
     @jsonName("recipient_contract_number")
     recipientContractNumber: String,
@@ -98,7 +137,19 @@ structure Transaction {
     recipientCountry: String,
 
     @jsonName("recipient_phone")
-    recipientPhone: String
+    recipientPhone: String,
+    
+    @jsonName("recipient_reg_date")
+    recipientRegDate: String,
+
+    @jsonName("recipient_bank_bic")
+    recipientBankBic: String,
+
+    @jsonName("recipient_bank_name")
+    recipientBankName: String,
+
+    @jsonName("recipient_is_client")
+    recipientIsClient: Boolean
 }
 
 enum TransactionType {
